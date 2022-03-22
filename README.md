@@ -13,15 +13,14 @@ Seit neusten ist Stein, Schere Papier das meistgespielte  Glückspiel weltweit. 
 	Response: 200
 		 UID des Spielers
 	Businesslogik:
-	        Jeden Spieler werden 100 Bucks gutgeschrieben
+	        Jeden Spieler werden 100 Bucks als Credit gutgeschrieben
 3. GET Highscore
                  Liste mit Name und Highscore
 4. GET Amount
 	1. Rückgabe des Erwirtschafteten Betrags
 5. GET Play
 	   Eine Spiel besteht aus n Runden.
-	   Den Gewinner werden in jeder Runde Einsatz - Transfergebühren gut geschrieben. 
-	   Der Server entscheidet per Zufall wer miteinander spielt und spielt die Gegner aus.
+	   In jeder Runde werden aus der Anzahl der Spieler jeweils zufällig zwei Spieler die noch ein Credit haben ausgesucht. Diese treten dann virtuell gegeneinader an. Dies geschieht durch eine Anforderung (GET Requests "call") mit den Informationen wer der aktuelle Gegner ist an die ausgewählten Spieler. Als Rückantwort sendet der Spieler seinen Einsatz und sein ausgewähltes Symbol. Der Server entscheidet nun wer gewonnen hat. Den Gewinner werden in jeder Runde Einsatz - Transfergebühren gut geschrieben. 
 	
 6. GET PLAYER/{PLAYERID}
 	   Response:
