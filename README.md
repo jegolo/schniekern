@@ -2,7 +2,7 @@
 
 Hintergrund:
 
-Seit neusten ist Stein, Schere Papier das meistgespielte  Glückspiel weltweit. Plattformen die die diese Spiel anbieten können aufgrund von Transfergebühren x% vom Kuchen abbekommen. Aber Vorsicht sind sie zu teuer gehen die Spieler woanders hin. Eine Plattform für das Stein Schere Papier Spiel muss folgende Schnittstellen anbieten.
+Seit neusten ist Stein, Schere Papier das meistgespielte  Glückspiel weltweit. Eine Plattform für das Stein Schere Papier Spiel muss folgende Schnittstellen anbieten.
 
 1. GET Request OFFER zeigt die Konditionen des Servers
             Rückgabe: Transferfee, Anzahl Registrierter Spieler
@@ -20,7 +20,7 @@ Seit neusten ist Stein, Schere Papier das meistgespielte  Glückspiel weltweit. 
 	1. Rückgabe des Erwirtschafteten Betrags
 5. GET Play
 	   Eine Spiel besteht aus n Runden.
-	   In jeder Runde werden aus der Anzahl der Spieler jeweils zufällig zwei Spieler die noch ein Credit haben ausgesucht. Diese treten dann virtuell gegeneinader an. Dies geschieht durch eine Anforderung (GET Requests "call") mit den Informationen wer der aktuelle Gegner ist an die ausgewählten Spieler. Als Rückantwort sendet der Spieler seinen Einsatz und sein ausgewähltes Symbol. Der Server entscheidet nun wer gewonnen hat. Den Gewinner werden in jeder Runde Einsatz - Transfergebühren gut geschrieben. 
+	   In jeder Runde werden aus der Anzahl der Spieler jeweils zufällig zwei Spieler die noch ein Credit haben ausgesucht. Diese treten dann virtuell gegeneinader an. Dies geschieht durch eine Anforderung (GET Requests "call") mit den Informationen wer der aktuelle Gegner ist und einer Unique ID des aktuellen Spieles an die ausgewählten Spieler. Falls der Spieler das Spiel annimmt sendet er die Rückantwort 200 und das ausgewählte SYMBOL und Einsatz. Der Server entscheidet nun wer gewonnen hat und gibt sendet dann an den beiden Clients das Ergebniss. Den Gewinner werden in jeder Runde Einsatz. 
 	
 6. GET PLAYER/{PLAYERID}
 	   Response:
@@ -36,3 +36,4 @@ Client Schnittstelle:
              Response:
 		stake
 		Stain Schere Papier
+2. POST Result des Spieles
