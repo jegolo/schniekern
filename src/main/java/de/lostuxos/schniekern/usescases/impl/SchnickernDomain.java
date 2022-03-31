@@ -1,41 +1,39 @@
 package de.lostuxos.schniekern.usescases.impl;
 
-import de.lostuxos.schniekern.usescases.*;
+import de.lostuxos.schniekern.usescases.Play;
+import de.lostuxos.schniekern.usescases.PlayerInfo;
+import de.lostuxos.schniekern.usescases.Register;
+import de.lostuxos.schniekern.usescases.dto.Call;
 import de.lostuxos.schniekern.usescases.dto.Player;
 import de.lostuxos.schniekern.usescases.dto.Round;
-import de.lostuxos.schniekern.usescases.dto.ServerInfo;
+import de.lostuxos.schniekern.usescases.dto.Symbol;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Component
-public class SchnickernDomain implements GetAmount, GetHighScore, GetServerInfo, Play, Register {
+public class SchnickernDomain implements  Register, PlayerInfo,Play {
 
     private List<Player> players = new ArrayList<>();
 
     @Override
-    public Integer getAmount() {
-        return null;
-    }
-
-    @Override
-    public List<Player> highscore() {
-        return null;
-    }
-
-    @Override
-    public ServerInfo info() {
-        return ServerInfo.builder()
-                .fee(0.1)
-                .registeredPlayers(players.size())
-                .build();
-    }
-
-    @Override
     public List<Round> play(int rounds) {
-        return null;
+        var result = new ArrayList<Round>();
+        for (var round = 0; round <rounds ; round++) {
+            result.add(Round.builder()
+                            .player1(players.stream().findAny().get())
+                            .player2(players.stream().findAny().get())
+                            .winner(players.stream().findAny().get())
+                            .calls(List.of(Call.builder().symbolPlayerOne(Symbol.PAPER).symbolPlayerTwo(Symbol.SCISSOR).build()))
+                            .stake(25).build()
+                            );
+
+        }
+
+        return result;
     }
 
     @Override
@@ -50,5 +48,17 @@ public class SchnickernDomain implements GetAmount, GetHighScore, GetServerInfo,
                 .build();
         players.add(player);
         return player;
+    }
+
+    @Override
+    public Optional<Player> getPlayer(String id) {
+        return players.stream().filter(
+                x -> id.equals(x.getId())).findFirst();
+
+    }
+
+    @Override
+    public List<Player> getAll() {
+        return players;
     }
 }

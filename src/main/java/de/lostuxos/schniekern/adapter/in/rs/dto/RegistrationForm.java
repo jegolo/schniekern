@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class RegistrationForm {
     String name;
-    String clientUrl;
+    String clientURL;
 }
