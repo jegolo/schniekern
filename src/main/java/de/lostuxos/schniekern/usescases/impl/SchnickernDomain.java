@@ -1,5 +1,8 @@
 package de.lostuxos.schniekern.usescases.impl;
 
+import de.lostuxos.schniekern.outports.Caller;
+import de.lostuxos.schniekern.outports.Move;
+import de.lostuxos.schniekern.outports.PlayerRepository;
 import de.lostuxos.schniekern.usescases.Play;
 import de.lostuxos.schniekern.usescases.PlayerInfo;
 import de.lostuxos.schniekern.usescases.Register;
@@ -7,6 +10,9 @@ import de.lostuxos.schniekern.usescases.dto.Call;
 import de.lostuxos.schniekern.usescases.dto.Player;
 import de.lostuxos.schniekern.usescases.dto.Round;
 import de.lostuxos.schniekern.usescases.dto.Symbol;
+import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -15,25 +21,67 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@AllArgsConstructor
 public class SchnickernDomain implements  Register, PlayerInfo,Play {
 
-    private List<Player> players = new ArrayList<>();
+    private final PlayerRepository playerRepository;
+
+    @Autowired
+    private final Caller caller;
 
     @Override
     public List<Round> play(int rounds) {
         var result = new ArrayList<Round>();
         for (var round = 0; round <rounds ; round++) {
-            result.add(Round.builder()
-                            .player1(players.stream().findAny().get())
-                            .player2(players.stream().findAny().get())
-                            .winner(players.stream().findAny().get())
-                            .calls(List.of(Call.builder().symbolPlayerOne(Symbol.PAPER).symbolPlayerTwo(Symbol.SCISSOR).build()))
-                            .stake(25).build()
-                            );
-
+            result.add(playRound());
         }
 
         return result;
+    }
+
+    public Round playRound() {
+        var round = new Round();
+        round.setCalls(new ArrayList<>());
+        var opponents = playerRepository.chooseOpponents();
+
+        Move movePlayer1;
+        Move movePlayer2;
+
+        Result result;
+        do {
+            movePlayer1 = caller.callPlayer(opponents.getLeft());
+            movePlayer2 = caller.callPlayer(opponents.getRight());
+            result = decide(movePlayer1.getSymbol(), movePlayer2.getSymbol());
+            round.setPlayer1(opponents.getLeft());
+            round.setPlayer2(opponents.getRight());
+            round.getCalls().add(Call.builder().symbolPlayerOne(movePlayer1.getSymbol()).symbolPlayerOne(movePlayer2.getSymbol()).build());
+        } while (Result.DRAW.equals(result)) ;
+
+        if (Result.LEFT.equals(result)) {
+            setWinner(round, opponents.getLeft(), opponents.getRight(), movePlayer2.getStake());
+        } else {
+            setWinner(round, opponents.getRight(), opponents.getLeft(), movePlayer1.getStake());
+        }
+
+       return round;
+    }
+
+    private void setWinner(Round round, Player winner, Player looser, int stake) {
+        round.setWinner(winner);
+        winner.setScore(winner.getScore() + stake );
+        looser.setScore(looser.getScore() - stake );
+    }
+
+
+    public Result decide(Symbol symbol1, Symbol symbol2) {
+        if (symbol1.equals(symbol2)) {
+            return Result.DRAW;
+        } else if (symbol1.ordinal() %2 == symbol2.ordinal()) {
+            return Result.RIGHT;
+        } else if (symbol1.ordinal() > symbol2.ordinal() || symbol1.ordinal() == symbol2.ordinal() %2) {
+            return Result.LEFT;
+        } else
+            return Result.RIGHT;
     }
 
     @Override
@@ -46,19 +94,18 @@ public class SchnickernDomain implements  Register, PlayerInfo,Play {
                 .won(0)
                 .clientUrl(clientUrl)
                 .build();
-        players.add(player);
+        playerRepository.add(player);
         return player;
     }
 
+
     @Override
     public Optional<Player> getPlayer(String id) {
-        return players.stream().filter(
-                x -> id.equals(x.getId())).findFirst();
-
+        return playerRepository.getPlayer(id);
     }
 
     @Override
     public List<Player> getAll() {
-        return players;
+        return playerRepository.getAll();
     }
 }
