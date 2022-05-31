@@ -10,11 +10,11 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class CallerImpl implements Caller {
     @Override
-    public Move callPlayer(Player player) {
+    public Move callPlayer(Player player, Player opponent) {
         RestTemplate restTemplate = new RestTemplate();
         var move = restTemplate.postForObject(
                 player.getClientUrl(),
-                CallRequest.builder().roundId("?").opponent("?").build(),
+                CallRequest.builder().roundId("?").opponent(opponent.getName()).build(),
                 Move.class);
 
 

@@ -48,8 +48,8 @@ public class SchnickernDomain implements  Register, PlayerInfo,Play {
 
         Result result;
         do {
-            movePlayer1 = caller.callPlayer(opponents.getLeft());
-            movePlayer2 = caller.callPlayer(opponents.getRight());
+            movePlayer1 = caller.callPlayer(opponents.getLeft(), opponents.getRight());
+            movePlayer2 = caller.callPlayer(opponents.getRight(), opponents.getLeft());
             result = decide(movePlayer1.getSymbol(), movePlayer2.getSymbol());
             round.setPlayer1(opponents.getLeft());
             round.setPlayer2(opponents.getRight());

@@ -57,8 +57,8 @@ class SchnickernDomainTest {
 
 
         when(playerRepository.chooseOpponents()).thenReturn(Pair.of(player1, player2));
-        when(caller.callPlayer(player1)).thenReturn(Move.builder().stake(50).symbol(Symbol.ROCK).build());
-        when(caller.callPlayer(player2)).thenReturn(Move.builder().stake(50).symbol(Symbol.SCISSOR).build());
+        when(caller.callPlayer(player1, player2)).thenReturn(Move.builder().stake(50).symbol(Symbol.ROCK).build());
+        when(caller.callPlayer(player2, player1)).thenReturn(Move.builder().stake(50).symbol(Symbol.SCISSOR).build());
         //WHEN
         var round = schnickernDomain.playRound();
 

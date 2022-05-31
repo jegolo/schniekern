@@ -17,7 +17,7 @@ public class RandomResponseBot extends AbstractBot {
 
         int rand = (int) Math.round(Math.random() * 2);
         Move move = Move.builder()
-                .stake(0)
+                .stake(1)
                 .symbol(Symbol.values()[rand])
                 .build();
 
