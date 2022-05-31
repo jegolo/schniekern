@@ -10,7 +10,7 @@ schemes:
 paths:
   /round/call:
     post:
-      summary: Call player to play.
+      summary: CallRequest player to play.
       description: SSP Server calls player to play.
       produces:
         - application/json
